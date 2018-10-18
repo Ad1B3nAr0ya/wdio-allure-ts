@@ -676,6 +676,45 @@ export namespace BrowserUtils {
     }
   }
 
+    /**
+     *
+     * @param firstAction
+     * @param secondAction
+     */
+    export function callAsync(firstAction : Function, secondAction ? : Function) : any {
+        if(secondAction !== undefined)  {
+            browser.call( () => {
+                return firstAction().then(secondAction());
+            });
+        } else  {
+            browser.call( () => {
+                return firstAction();
+            });
+        }
+    }
+
+    /**
+     *
+     * @param firstAction
+     * @param secondAction
+     */
+    // tslint:disable-next-line:no-any
+    export function callAsyncPromise(firstAction : Function, secondAction : Function) : any {
+        browser.call( () => {
+            // tslint:disable-next-line:no-any
+            return new Promise( (resolve : any , reject : any) : any => {
+                // tslint:disable-next-line:no-any
+                firstAction(secondAction,  (err : string, res : any) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    resolve(res)
+                })
+            })
+        });
+    }
+
+
   /**
    * When switching between iframes, without wait it will fail to switch to iframe
    *
